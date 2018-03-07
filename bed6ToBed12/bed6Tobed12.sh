@@ -1,5 +1,13 @@
 #!/bin/bash
-inputfile="$1"
+if [ $1 != "-i" ]; then
+    echo "usage examples:"
+ echo "bed6ToBed12 -i bed6file"
+ echo "bed6ToBed12 -i bed6file > bed12file"
+echo "cat bed6file | bed6ToBed12 -i stdin > bed12file"
+ exit
+fi
+
+inputfile="$2"
 
 # merge overlapping bed6 entries with same names.
 ## this identifies the path to the accompagnying Rscript:
@@ -11,7 +19,17 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
 ### The Rscript command to run
+if [ $inputfile == "stdin" ]; then
+RESULT=$(cat)
+#echo $RESULT
+#echo "Rscript "$DIR"/mergeBed6.R --args "$inputfile""
+comvar=$(echo "$RESULT" | Rscript "$DIR"/mergeBed6.R --slave --args "$inputfile")
+#comvar=$(Rscript "$DIR"/mergeBed6.R --args --slave "$inputfile")
+else
 comvar=$(cat "$DIR"/mergeBed6.R | R --slave --args "$inputfile")
+fi
+#
+#comvar=$(cat "$DIR"/mergeBed6.R | R --slave --args "$inputfile")
 
 ## the command to build the bed12 file
 echo "$comvar" | awk '

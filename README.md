@@ -2,11 +2,16 @@
 This program turns bed6 files into bed12 files based on the fourth name column. 
 Entries on the same chromosome with the same name are converted into a bed12 entry. 
 The program sorts the output file according to chromosome, name and position.
-Input needs to be a bed6 file, and it cannot be piped in (currently). 
+
+Input supports stdin and can be piped. 
+The convention of parameter -i is adopted from bedtools
 Output is stdout, so usage would be e.g.
 
-bed6ToBed12 in6.bed > out12.bed
- 
+bed6ToBed12 -i bed6file
+bed6ToBed12 -i bed6file > bed12file
+cat bed6file | bed6ToBed12 -i stdin > bed12file
+cat bed6file | bed6ToBed12 -i stdin | something something > file
+
 To use the program, download the bed6ToBed12 directory and make executable. 
 Add e.g. a symbolic link to the bed6ToBed12.sh file in your /usr/local/bin directory.
 The program runs partly in R and requires packages iRanges and parallel, so make sure this is available.

@@ -1,10 +1,13 @@
-infile <- commandArgs()[4] 
-# outfile <- commandArgs()[5] # changed 2018-03-06 (blacked out)
-options(scipen=99)
-#cat("Merging across names for ",infile,"\n")
-df <- read.table(as.is=TRUE,infile)
-#cat("  regions in input ",dim(df)[1],"\n")
-#df <- df[order(df$V1,df$V4,df$V2),]
+if(grepl("stdin",commandArgs()[8])){
+f <- file("stdin")
+open(f)
+df <- read.table(textConnection(readLines(f)),as.is=T)
+} else {
+infile <- commandArgs()[4]
+ df <- read.table(as.is=TRUE,infile)
+}
+
+
 df <- df[order(df$V4,df$V1,df$V2),] # changed 2018-03-06
 df$V2 <- df$V2+1 # get up from bed
 suppressMessages(suppressWarnings(require(IRanges,quietly = TRUE,warn.conflicts = FALSE)))
@@ -36,8 +39,4 @@ dfout$val <- df$V5[match(namesout,df$V4)]
 dfout$strand <- df$V6[match(namesout,df$V4)]
 dfout$starts <- dfout$starts-1 # back to bed
 write.table(sep="\t", col.names=FALSE, row.names=FALSE, quote=FALSE,x=dfout)
-#write.table(sep=" ", col.names=FALSE, row.names=FALSE, quote=FALSE,x=dfout,file="tempmogfile")
-#write.table(sep="\t", col.names=FALSE, row.names=FALSE, quote=FALSE,x=dfout,file="tempmogfile") # changed 2018-03-06 (blacked out)
-#system(paste0("cat tempmogfile | sort -k1,1 -k4,4 -k2,2n > ",outfile))# changed 2018-03-06 (blacked out)
-#	system("rm tempmogfile")# changed 2018-03-06 (blacked out)
-#cat("Finished... output in ",outfile,"\n")# changed 2018-03-06 (blacked out)
+
