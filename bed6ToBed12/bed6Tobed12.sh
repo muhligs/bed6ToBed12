@@ -1,37 +1,19 @@
 #!/bin/bash
-#if [ "$1" != "-s" ]; then
-#a=$(cut -f4,4 "$1" | sort | uniq | wc -l)
-#b=$(cut -f4,4 "$1" | uniq | wc -l)
-#if [ $a -ne $b ]; then
-#echo "The bed6 file needs to be arranged by the name field. (cut -f4,4 file | uniq | wc -l should equal cut -f4,4 file | sort | uniq | wc -l)\n
-#use parameter -s to let this program sort (cat input | sort -k1,1 -k4,4 -k2,2n)" >&2
-#exit
-#fi
 inputfile="$1"
-#comvar="cat $inputfile"
-#fi
 
-
-#if [ "$1" = "-s" ]; then
-#inputfile="$2"
-#fi
 # merge overlapping bed6 entries with same names.
-# echo "The script you are running has basename `basename $0`, dirname `dirname $0`"
-comvar=$(cat `dirname $0`/bed6to12/mergeBed6.R | R --slave --args "$inputfile")
-#comvar=$(cat `dirname $0`/bed6to12/mergeBed6.R | R --slave --args `$inputfile`"
-#echo "$comvar" 
-#cat "$comvar" 
-#cat $(dirname $0)/bed6to12/mergeBed6.R | R --slave --args '$inputfile'
-#exit 1
+## this identifies the path to the accompagnying Rscript:
+SOURCE="${BASH_SOURCE[0]}"
+while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
+  DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+  SOURCE="$(readlink "$SOURCE")"
+  [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
+done
+DIR="$( cd -P "$( dirname "$SOURCE" )" && pwd )"
+### The Rscript command to run
+comvar=$(cat "$DIR"/mergeBed6.R | R --slave --args "$inputfile")
 
-
-#comvar="cat $2 | sort -k1,1 -k4,4 -k2,2n"
-#echo "$comvar" 
-#cat "$inputfile" | sort -k1,1 -k4,4 -k2,2n |
-#fi
-
-
-#cat "$inputfile" | sort -k1,1 -k4,4 -k2,2n |
+## the command to build the bed12 file
 echo "$comvar" | awk '
 BEGIN {
 curname="start"
