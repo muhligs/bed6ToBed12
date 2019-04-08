@@ -8,8 +8,11 @@ The convention of parameter -i is adopted from bedtools
 Output is stdout, so usage would be e.g.
 
 bed6ToBed12 -i bed6file
+
 bed6ToBed12 -i bed6file > bed12file
+
 cat bed6file | bed6ToBed12 -i stdin > bed12file
+
 cat bed6file | bed6ToBed12 -i stdin | something something > file
 
 To use the program, download the bed6ToBed12 directory and make executable. 
